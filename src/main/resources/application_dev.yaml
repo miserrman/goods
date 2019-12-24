@@ -1,0 +1,50 @@
+erver:
+  port: 8018
+#  address: localhost
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://47.100.55.218:3306/ooad?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: 123456
+    initial-size: 5
+  application:
+    name: goodsService
+
+mybatis:
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: com.ooad.good.domain
+  configuration:
+    map-underscore-to-camel-case: true
+    auto-mapping-behavior: full
+
+  eureka:
+    client:
+     serviceUrl:
+      defaultZone: http://47.103.29.203:8761/eureka/
+   跳转链接
+    instance:
+     tatus-page-url: http://${server.address}:${server.port}/swagger-ui.html#/
+     instance-id: ${ooad.sererName}:${server.port}
+    ## 设置微服务调用地址为IP优先（缺省为false）
+     prefer-ip-address: true
+    ## 设置IP地址
+     ip-address: ${server.address}
+    ## 心跳时间，即服务续约间隔时间（缺省为30s）
+     lease-renewal-interval-in-seconds: 2
+    ## 发呆时间，即服务续约到期时间（缺省为90s
+     lease-expiration-duration-in-seconds: 3
+   系统配置
+  # 服务名称
+
+comment-api: http://localhost:8016
+footprint-api: http://localhost:8017
+log-api: http://localhost:8012
+logging:
+  level:
+    org.springframework.web: info
+    root: error
+    com.ooad.good.controller: debug
+  file:
+    path: D:\ooad-project\pressf\good\src\main\resources\log-config:classpath:logback-spring.xml

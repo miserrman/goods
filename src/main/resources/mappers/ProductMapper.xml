@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ooad.good.mapper.ProductMapper">
+
+    <resultMap id="ProductResultMap" type="Product">
+        <id column="id" jdbcType = "INTEGER" property="id"/>
+        <result column="pic_url" jdbcType="VARCHAR" property="picUrl"/>
+        <result column="specifications" jdbcType="VARCHAR" property="specifications"/>
+        <result column="goods_id" jdbcType="INTEGER" property="goodsId"/>
+        <result column="price" jdbcType="INTEGER" property="price"/>
+        <result column="safety_stock" jdbcType="INTEGER" property="safetyStock"/>
+        <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
+        <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified"/>
+        <result column="is_deleted" jdbcType="BIT" property="beDeleted"/>
+    </resultMap>
+
+    <select id="findProductById" parameterType="Integer" resultType="Product">
+        select id,
+        pic_url,
+        specifications,
+        goods_id,
+        price,
+        safety_stock,
+        gmt_modified,
+        gmt_create,
+        is_deleted
+        from oomall_product where id = #{id} and is_deleted = 0
+    </select>
+
+    <update id="updateProduct" >
+        update oomall_product
+        <trim prefix="set" suffixOverrides=",">
+            <if test="picUrl!=null">pic_url=#{picUrl},</if>
+            <if test="specifications!=null">specifications=#{specifications},</if>
+            <if test="goodsId!=null">goods_id=#{goodsId},</if>
+            <if test="price!=null">price=#{price},</if>
+            <if test="safetyStock!=null">safety_stock=#{safetyStock},</if>
+            <if test="gmtCreate!=null">gmt_create=#{gmtCreate},</if>
+            <if test="gmtModified!=null">gmt_modified=#{gmtModified},</if>
+            <if test="beDeleted!=null">is_deleted=#{beDeleted},</if>
+        </trim>
+        WHERE id=#{id}
+    </update>
+
+    <select id="findProductByGoodsId" parameterType="Integer" resultType="Product">
+        select id,
+        pic_url,
+        specifications,
+        goods_id,
+        price,
+        safety_stock,
+        gmt_modified,
+        gmt_create,
+        is_deleted
+        from oomall_product where goods_id = #{id} and is_deleted = 0
+        <if test="page != null or limit != null">
+         limit ${(page - 1) * limit},${limit}
+        </if>
+    </select>
+
+    <insert id="addProduct" useGeneratedKeys="true" keyProperty="id">
+        insert into oomall_product(pic_url, specifications, goods_id, price, safety_stock, gmt_create,
+        gmt_modified, is_deleted)
+        values (#{picUrl}, #{specifications}, #{goodsId}, #{price}, #{safetyStock}, #{gmtCreate},
+        #{gmtModified}, #{beDeleted})
+    </insert>
+</mapper>

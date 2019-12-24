@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ooad.good.mapper.GoodsMapper">
+
+    <resultMap id="GoodsResultMap" type="com.ooad.good.domain.Goods" >
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="goods_sn" jdbcType="VARCHAR" property="goodsSn"/>
+        <result column="short_name" jdbcType="VARCHAR" property="shortName"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="brief" jdbcType="VARCHAR" property="brief"/>
+        <result column="pic_url" jdbcType="VARCHAR" property="picUrl"/>
+        <result column="detail" jdbcType="VARCHAR" property="detail"/>
+        <result column="status" jdbcType="BIT" property="statusCode"/>
+        <result column="share_url" jdbcType="VARCHAR" property="shareUrl"/>
+        <result column="gallery" jdbcType="VARCHAR" property="gallery"/>
+        <result column="goods_category_id" jdbcType="INTEGER" property="goodsCategoryId"/>
+        <result column="brand_id" jdbcType="INTEGER" property="brandId"/>
+        <result column="weight" jdbcType="DECIMAL" property="weight"/>
+        <result column="volume" jdbcType="VARCHAR" property="volume"/>
+        <result column="special_freight_id" jdbcType="INTEGER" property="specialFreightId"/>
+        <result column="is_special" jdbcType="BIT" property="beSpecial"/>
+        <result column="gmt_Create" jdbcType="TIMESTAMP" property="gmtCreate"/>
+        <result column="gmt_Modified" jdbcType="TIMESTAMP" property="gmtModified"/>
+        <result column="is_deleted" jdbcType="BIT" property="beDeleted"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+    </resultMap>
+
+    <select id="searchGoodsByName" resultMap="GoodsResultMap">
+        select id,
+        name,
+        goods_sn,
+        short_name,
+        description,
+        brief,
+        pic_url,
+        detail,
+        status,
+        share_url,
+        gallery,
+        goods_category_id,
+        brand_id,
+        weight,
+        volume,
+        special_freight_id,
+        is_special,
+        gmt_modified,
+        gmt_create,
+        is_deleted
+        from name like %#{name}%
+    </select>
+    <select id="findGoodsById" resultMap="GoodsResultMap" parameterType="Integer">
+        select id,
+        name,
+        goods_sn,
+        short_name,
+        description,
+        brief,
+        pic_url,
+        detail,
+        status,
+        share_url,
+        gallery,
+        goods_category_id,
+        brand_id,
+        weight,
+        volume,
+        special_freight_id,
+        is_special,
+        gmt_modified,
+        gmt_create,
+        is_deleted
+        from oomall_goods where id = #{id} and is_deleted = 0
+    </select>
+
+    <select id="findGoods" resultMap="GoodsResultMap">
+        select id,
+        name,
+        goods_sn,
+        short_name,
+        description,
+        brief,
+        pic_url,
+        detail,
+        status,
+        share_url,
+        gallery,
+        goods_category_id,
+        brand_id,
+        weight,
+        volume,
+        special_freight_id,
+        is_special,
+        gmt_modified,
+        gmt_create,
+        is_deleted
+        from oomall_goods
+        where is_deleted = 0
+        <if test="page != null">
+            limit ${(page - 1) * limit}, ${limit}
+        </if>
+    </select>
+
+    <insert id="addGoods" parameterType="Goods" useGeneratedKeys="true" keyProperty="id">
+        insert into oomall_goods(
+        gmt_create,
+        gmt_modified,
+        name,
+        goods_sn,
+        short_name,
+        description,
+        brief,
+        pic_url,
+        detail,
+        status,
+        share_url,
+        gallery,
+        goods_category_id,
+        brand_id,
+        is_deleted,
+        weight,
+        volume,
+        special_freight_id,
+        is_special)
+        values (
+        #{gmtCreate},
+        #{gmtModified},
+        #{name},
+        #{goodsSn},
+        #{shortName},
+        #{description},
+        #{brief},
+        #{picUrl},
+        #{detail},
+        #{statusCode},
+        #{shareUrl},
+        #{gallery},
+        #{goodsCategoryId},
+        #{brandId},
+        #{beDeleted},
+        #{weight},
+        #{volume},
+        #{specialFreightId},
+        #{beSpecial}
+        )
+    </insert>
+
+    <update id="updateGoods" parameterType="Goods">
+        update oomall_goods
+        <trim prefix="set" suffixOverrides=",">
+            <if test="gmtCreate!=null">gmt_create=#{gmtCreate},</if>
+            <if test="gmtModified!=null">gmt_modified=#{gmtModified},</if>
+            <if test="name!=null">name=#{name},</if>
+            <if test="goodsSn!=null">goods_sn=#{goodsSn},</if>
+            <if test="shortName!=null">short_name=#{shortName},</if>
+            <if test="description!=null">description=#{description},</if>
+            <if test="brief!=null">brief=#{brief},</if>
+            <if test="picUrl!=null">pic_url=#{picUrl},</if>
+            <if test="detail!=null">detail=#{detail},</if>
+            <if test="statusCode!=null">status=#{statusCode},</if>
+            <if test="shareUrl!=null">share_url=#{shareUrl},</if>
+            <if test="gallery!=null">gallery=#{gallery},</if>
+            <if test="goodsCategoryId!=null">goods_category_id=#{goodsCategoryId},</if>
+            <if test="brandId!=null">brand_id=#{brandId},</if>
+            <if test="beDeleted!=null">is_deleted=#{beDeleted},</if>
+            <if test="weight!=null">weight=#{weight},</if>
+            <if test="volume!=null">volume=#{volume},</if>
+            <if test="specialFreightId!=null">special_freight_id=#{specialFreightId},</if>
+            <if test="beSpecial!=null">is_special=#{beSpecial},</if>
+        </trim>
+        where id=#{id}
+    </update>
+
+    <select id="findGoodsByName" resultMap="GoodsResultMap" parameterType="String">
+        select id,
+        name,
+        goods_sn,
+        short_name,
+        description,
+        brief,
+        pic_url,
+        detail,
+        status,
+        share_url,
+        gallery,
+        goods_category_id,
+        brand_id,
+        weight,
+        volume,
+        special_freight_id,
+        is_special,
+        gmt_modified,
+        gmt_create,
+        is_deleted
+        from oomall_goods where name like '${name}%' and is_deleted = 0 and status > 0
+        limit ${(page - 1) * limit},${limit}
+    </select>
+
+    <select id="findGoodsByGoodsCategoryId" resultMap="GoodsResultMap" parameterType="Integer">
+        select id,
+        name,
+        goods_sn,
+        short_name,
+        description,
+        brief,
+        pic_url,
+        detail,
+        status,
+        share_url,
+        gallery,
+        goods_category_id,
+        brand_id,
+        weight,
+        volume,
+        special_freight_id,
+        is_special,
+        gmt_modified,
+        gmt_create,
+        is_deleted
+        from oomall_goods where goods_category_id = #{id} and is_deleted = 0
+        <if test="role == 0">
+            and status = 1
+        </if>
+        <if test="limit != null or page != null">
+            limit ${(page - 1) * limit}, ${limit}
+        </if>
+    </select>
+
+    <select id="findGoodsByBrandId" resultMap="GoodsResultMap" parameterType="Integer">
+        select id,
+        name,
+        goods_sn,
+        short_name,
+        description,
+        brief,
+        pic_url,
+        detail,
+        status,
+        share_url,
+        gallery,
+        goods_category_id,
+        brand_id,
+        weight,
+        volume,
+        special_freight_id,
+        is_special,
+        gmt_modified,
+        gmt_create,
+        is_deleted
+        from oomall_goods
+        where brand_id = #{id} and is_deleted = 0
+        <if test="role == 0">
+            and status = 1
+        </if>
+        <if test="page != null or limit != null">
+            limit ${(page - 1) * limit},${limit}
+        </if>
+    </select>
+
+
+    <select id="findSellingGoods" resultMap="GoodsResultMap" resultType="Goods">
+        select id,
+        name,
+        goods_sn,
+        short_name,
+        description,
+        brief,
+        pic_url,
+        detail,
+        status,
+        share_url,
+        gallery,
+        goods_category_id,
+        brand_id,
+        weight,
+        volume,
+        special_freight_id,
+        is_special,
+        gmt_modified,
+        gmt_create,
+        is_deleted
+        from oomall_goods where
+        status > 0 and is_deleted = 0
+    </select>
+
+    <select id="searchGoods" resultMap="GoodsResultMap" resultType="Goods">
+        select id,
+        name,
+        goods_sn,
+        short_name,
+        description,
+        brief,
+        pic_url,
+        detail,
+        status,
+        share_url,
+        gallery,
+        goods_category_id,
+        brand_id,
+        weight,
+        volume,
+        special_freight_id,
+        is_special,
+        gmt_modified,
+        gmt_create,
+        is_deleted
+        from oomall_goods where is_deleted = 0
+        <if test="name != null or goodsSn != null">
+        and
+        <trim suffixOverrides="and">
+            <if test="name != null">
+                name = #{name} and
+            </if>
+            <if test="goodsSn != null">
+                goods_sn = #{goodsSn} and
+            </if>
+        </trim>
+        </if>
+        limit ${(page - 1) * limit},${limit}
+    </select>
+
+    <update id="deletedBrandUpdateGoods">
+        update oomall_goods
+        set brand_id = null where
+        brand_id = #{brandId}
+    </update>
+
+    <update id="deletedGoodsCategoryUpdateGoods">
+        update oomall_goods
+        set goods_category_id = null where
+        goods_category_id = #{goodsCategoryId}
+    </update>
+
+</mapper>

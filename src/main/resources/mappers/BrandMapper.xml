@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ooad.good.mapper.BrandMapper">
+
+    <resultMap id="BrandResultMap" type="com.ooad.good.domain.Brand">
+        <id column="id" jdbcType = "INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="pic_url" jdbcType="VARCHAR" property="picUrl"/>
+        <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
+        <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified"/>
+        <result column="is_deleted" jdbcType="BIT" property="beDeleted"/>
+    </resultMap>
+
+    <select id="findBrandById" parameterType="Integer" resultMap="BrandResultMap">
+        select id,
+        name,
+        description,
+        pic_url,
+        gmt_modified,
+        gmt_create,
+        is_deleted
+        from oomall_brand where id = #{id} and is_deleted = 0
+    </select>
+
+    <select id="findAllBrands" resultMap="BrandResultMap">
+        select id,
+        name,
+        description,
+        pic_url,
+        gmt_modified,
+        gmt_create,
+        is_deleted
+        from oomall_brand
+        where is_deleted = 0
+        <if test="page != null">
+            limit ${(page - 1) * limit},${limit}
+        </if>
+    </select>
+    <select id="findBrandByName" parameterType="String" resultMap="BrandResultMap">
+        select id,
+        name,
+        description,
+        pic_url,
+        gmt_modified,
+        gmt_create,
+        is_deleted
+        from oomall_brand where name = #{name} and is_deleted = 0
+    </select>
+
+    <select id="searchBrandByName" resultMap="BrandResultMap">
+         select id,
+        name,
+        description,
+        pic_url,
+        gmt_modified,
+        gmt_create,
+        is_deleted
+        from oomall_brand
+        where is_deleted = 0
+        <if test="id != null or name != null">
+            and
+            <trim suffixOverrides="and">
+                <if test="name != null">
+                    name like = #{name} and
+                </if>
+                <if test="id != null">
+                    id = #{id} and
+                </if>
+            </trim>
+        </if>
+        limit ${(page - 1) * limit},${limit}
+    </select>
+
+    <update id="updateBrand" parameterType="Brand">
+        update oomall_brand
+        <trim prefix="set" suffixOverrides=",">
+            <if test="name!=null">name=#{name},</if>
+            <if test="description!=null">description=#{description},</if>
+            <if test="picUrl!=null">pic_url=#{picUrl},</if>
+            <if test="gmtCreate!=null">gmt_create=#{gmtCreate},</if>
+            <if test="gmtModified!=null">gmt_modified=#{gmtModified},</if>
+            <if test="beDeleted!=null">is_deleted=#{beDeleted},</if>
+        </trim>
+        WHERE id=#{id}
+    </update>
+
+    <insert id="addBrand" parameterType="Brand" useGeneratedKeys="true" keyProperty="id">
+        insert into oomall_brand(name, description, pic_url, gmt_create, gmt_modified, is_deleted)
+        values (#{name}, #{description}, #{picUrl}, #{gmtCreate}, #{gmtModified}, #{beDeleted})
+    </insert>
+</mapper>
