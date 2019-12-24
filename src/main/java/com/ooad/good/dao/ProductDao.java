@@ -22,9 +22,15 @@ public class ProductDao {
     @Autowired
     ProductMapper productMapper;
 
+    @Autowired
+    RedisDao redisDao;
 
     public Product findProductById(Integer productId) throws MallException {
-        Product product = productMapper.findProductById(productId);
+        Product product = (Product) redisDao.readObjectFromRedis("P_" + productId);
+        if (product != null) {
+            return product;
+        }
+        product = productMapper.findProductById(productId);
         if (product == null) {
             throw new MallException(ResponseCode.PRODUCT_UNKNOWN);
         }
@@ -77,6 +83,7 @@ public class ProductDao {
         if (res <= 0) {
             throw new MallException(ResponseCode.PRODUCT_ADD_ERROR);
         } else {
+            redisDao.updateObjectFromRedis("P_" + product.getId(), product);
             return productMapper.findProductById(product.getId());
         }
     }
@@ -91,11 +98,13 @@ public class ProductDao {
         if (res <= 0) {
             throw new MallException(ResponseCode.PRODUCT_UPDATE_ERROR);
         } else {
+            redisDao.updateObjectFromRedis("P_" + product.getId(), product);
             return product;
         }
     }
 
     public boolean clearProduct(Integer productId) throws MallException {
+        redisDao.clearObjectFromRedis("P_" + productId);
         Product product = this.findProductById(productId);
         product.setGmtModified(LocalDateTime.now());
         product.setBeDeleted(true);
@@ -131,6 +140,7 @@ public class ProductDao {
         if (res <= 0) {
             throw new MallException(ResponseCode.GET_PRODUCT_STOCK_FAIL);
         }
+        redisDao.updateObjectFromRedis("P_" + productId, product);
         product = productMapper.findProductById(productId);
         return product;
     }
@@ -149,6 +159,7 @@ public class ProductDao {
         if (res <= 0) {
             throw new MallException(ResponseCode.GET_PRODUCT_STOCK_FAIL);
         }
+        redisDao.updateObjectFromRedis("P_" + productId, product);
         product = productMapper.findProductById(productId);
         return product;
     }
