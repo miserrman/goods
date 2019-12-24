@@ -49,7 +49,7 @@
     </select>
 
     <select id="searchBrandByName" resultMap="BrandResultMap">
-         select id,
+        select id,
         name,
         description,
         pic_url,
