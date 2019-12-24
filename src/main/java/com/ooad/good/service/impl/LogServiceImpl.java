@@ -34,6 +34,6 @@ public class LogServiceImpl implements LogService {
         log.setActions(action);
         log.setStatusCode(statusCode);
         log.setActionId(actionId);
-        //ResponseEntity<String> responseEntity = restTemplate.postForEntity(logUrl, log, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(logUrl, log, String.class);
     }
 }

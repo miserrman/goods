@@ -19,6 +19,9 @@ import java.util.List;
 public class BrandDao {
 
     @Autowired
+    RedisDao redisDao;
+
+    @Autowired
     BrandMapper brandMapper;
 
     public List<Brand> findAllBrands(Integer page, Integer limit) throws MallException{
@@ -33,10 +36,15 @@ public class BrandDao {
     }
 
     public Brand findBrandById(Integer brandId) throws MallException {
-        Brand brand = brandMapper.findBrandById(brandId);
+        Brand brand = (Brand) redisDao.readObjectFromRedis("B_" + brandId);
+        if (brand != null) {
+            return brand;
+        }
+        brand = brandMapper.findBrandById(brandId);
         if (brand == null) {
             throw new MallException(ResponseCode.BRAND_UNKNOWN);
         }
+        redisDao.writeObjectToRedis("B_" + brandId, brand);
         return brand;
     }
 
@@ -46,6 +54,7 @@ public class BrandDao {
     }
 
     public boolean clearBrand(Integer brandId) throws MallException {
+        redisDao.clearObjectFromRedis("B_" + brandId);
         Brand brand = this.findBrandById(brandId);
         brand.setBeDeleted(true);
         brand.setGmtModified(LocalDateTime.now());
@@ -84,6 +93,7 @@ public class BrandDao {
             throw new MallException(ResponseCode.BRAND_UPDATE_ERROR);
         } else {
             brand = brandMapper.findBrandById(brandId);
+            redisDao.updateObjectFromRedis("B_" + brandId, brand);
             return brand;
         }
     }

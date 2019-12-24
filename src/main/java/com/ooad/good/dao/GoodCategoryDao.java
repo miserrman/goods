@@ -20,6 +20,9 @@ public class GoodCategoryDao {
     @Autowired
     GoodsCategoryMapper goodsCategoryMapper;
 
+    @Autowired
+    RedisDao redisDao;
+
     public List<GoodsCategory> findAllCategories(Integer page, Integer limit) throws MallException{
         if ((page == null || limit == null) || page <= 0 || limit <= 0) {
             throw new MallException(ResponseCode.BAD_ARGUMENT);
@@ -65,10 +68,15 @@ public class GoodCategoryDao {
     }
 
     public GoodsCategory findGoodCategoryById(Integer goodCategoryId) throws MallException {
-        GoodsCategory goodsCategory = goodsCategoryMapper.findGoodsCategoryById(goodCategoryId);
+        GoodsCategory goodsCategory = (GoodsCategory) redisDao.readObjectFromRedis("C_" + goodCategoryId);
+        if (goodsCategory != null) {
+            return goodsCategory;
+        }
+        goodsCategory = goodsCategoryMapper.findGoodsCategoryById(goodCategoryId);
         if (goodsCategory == null) {
             throw new MallException(ResponseCode.GOODSCATEGORY_UNKNOWN);
         }
+        redisDao.writeObjectToRedis("C_" + goodCategoryId, goodsCategory);
         return goodsCategory;
     }
 
@@ -98,11 +106,13 @@ public class GoodCategoryDao {
         }
         else {
             goodsCategory = goodsCategoryMapper.findGoodsCategoryById(goodCategoryId);
+            redisDao.updateObjectFromRedis("C_" + goodCategoryId, goodsCategory);
             return goodsCategory;
         }
     }
 
     public boolean clearGoodCategory(Integer goodCategoryId) throws MallException{
+        redisDao.clearObjectFromRedis("C_" + goodCategoryId);
         GoodsCategory goodsCategory = this.findGoodCategoryById(goodCategoryId);
         List<GoodsCategory> goodsCategoryList = new ArrayList<>();
         if (goodsCategory.getPid() == null || goodsCategory.getPid() == 0) {

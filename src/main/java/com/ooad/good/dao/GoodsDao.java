@@ -7,6 +7,7 @@ import com.ooad.good.util.ResponseUtil;
 import com.ooad.good.util.ReverseUtil;
 import com.ooad.good.util.exception.MallException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,9 @@ public class GoodsDao {
     @Autowired
     GoodsMapper goodsMapper;
 
+    @Autowired
+    RedisDao redisDao;
+
     public List<Goods> searchGoodsByName(String name, Integer page, Integer limit) throws MallException {
         if (page == null || limit == null || page <= 0 || limit <= 0) {
             throw new MallException(ResponseCode.BAD_ARGUMENT);
@@ -32,10 +36,15 @@ public class GoodsDao {
     }
 
     public Goods findGoodsById(Integer goodsId) throws MallException {
-        Goods goods = goodsMapper.findGoodsById(goodsId);
+        Goods goods = (Goods) redisDao.readObjectFromRedis("G_" + goodsId);
+        if (goods != null) {
+            return goods;
+        }
+        goods = goodsMapper.findGoodsById(goodsId);
         if (goods == null) {
             throw new MallException(ResponseCode.GOODS_UNKNOWN);
         }
+        redisDao.writeObjectToRedis("G_" + goodsId, goods);
         return goods;
     }
 
@@ -119,11 +128,13 @@ public class GoodsDao {
         }
         else {
             goods = goodsMapper.findGoodsById(goodsId);
+            redisDao.updateObjectFromRedis("G_" + goodsId, goods);
             return goods;
         }
     }
 
     public boolean clearGoods(Integer goodsId) throws MallException{
+        redisDao.clearObjectFromRedis("G_" + goodsId);
         Goods goods = this.findGoodsById(goodsId);
         goods.setStatusCode(0);
         goods.setBeDeleted(true);
