@@ -9,6 +9,9 @@ import org.springframework.context.annotation.Configuration;
 import java.lang.reflect.Method;
 
 
+/**
+ * @author wz
+ */
 @Configuration
 @EnableCaching
 public class RedisConfig extends CachingConfigurerSupport {

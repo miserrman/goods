@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author wz
+ */
 @Repository
 public class GoodsDao {
 
@@ -60,7 +63,10 @@ public class GoodsDao {
     }
 
     public List<Goods> findGoodsByBrandId(Integer brandId, Integer page, Integer limit, Integer role) throws MallException{
-        if ((page != null || limit != null) && (page <= 0 || limit <= 0)) {
+        if (page != null || limit != null) {
+            throw new MallException(ResponseCode.BAD_ARGUMENT);
+        }
+        if (page <= 0 || limit <= 0) {
             throw new MallException(ResponseCode.BAD_ARGUMENT);
         }
         List<Goods> goodsList = goodsMapper.findGoodsByBrandId(brandId, page, limit, role);
@@ -71,7 +77,10 @@ public class GoodsDao {
     }
 
     public List<Goods> findGoodsByGoodCategoryId(Integer goodCategoryId, Integer page, Integer limit, Integer role) throws MallException{
-        if ((page != null || limit != null) && (page <= 0 || limit <= 0)) {
+        if (page != null || limit != null) {
+            throw new MallException(ResponseCode.BAD_ARGUMENT);
+        }
+        if (page <= 0 || limit <= 0) {
             throw new MallException(ResponseCode.BAD_ARGUMENT);
         }
         List<Goods> goodsList = goodsMapper.findGoodsByGoodsCategoryId(goodCategoryId, page, limit, role);

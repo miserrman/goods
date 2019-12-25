@@ -35,9 +35,10 @@ public interface ProductMapper {
 
     /**
      * 用商品id获得所有产品
-     *
      * @param id 商品id
-     * @return 产品列表
+     * @param page 页
+     * @param limit 页限制
+     * @return List<Product> 货品列表
      */
     List<Product> findProductByGoodsId(@Param("id") Integer id,
                                        @Param("page") Integer page,

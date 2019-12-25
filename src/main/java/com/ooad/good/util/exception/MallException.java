@@ -4,6 +4,9 @@ import com.ooad.good.domain.Brand;
 import com.ooad.good.util.ResponseCode;
 import com.ooad.good.util.ResponseUtil;
 
+/**
+ * @author wz
+ */
 public class MallException extends Exception {
     private ResponseCode code = null;
 

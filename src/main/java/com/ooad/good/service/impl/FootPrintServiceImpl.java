@@ -19,6 +19,9 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+/**
+ * @author wz
+ */
 @Service
 public class FootPrintServiceImpl implements FootPrintService {
 

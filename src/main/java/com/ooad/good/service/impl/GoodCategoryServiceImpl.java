@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author wz
+ */
 @Service
 public class  GoodCategoryServiceImpl implements GoodCategoryService {
 
@@ -74,7 +77,7 @@ public class  GoodCategoryServiceImpl implements GoodCategoryService {
     }
 
     @Override
-    public boolean clearGoodCategory(Integer goodCategoryId) throws MallException{
+    public void clearGoodCategory(Integer goodCategoryId) throws MallException{
         GoodsCategory goodsCategory = goodCategoryDao.findGoodCategoryById(goodCategoryId);
         if (goodsCategory.getPid() == null || goodsCategory.getPid() == 0) {
             List<GoodsCategory> goodsCategoryList = goodsCategoryMapper.findLevelTwoGoodsCategoryByLevelOneId(goodCategoryId, null, null);
@@ -84,7 +87,6 @@ public class  GoodCategoryServiceImpl implements GoodCategoryService {
         }
         boolean res = goodCategoryDao.clearGoodCategory(goodCategoryId);
         goodsDao.deletedGoodsCategoryGoodsUpdate(goodCategoryId);
-        return res;
     }
 
     @Override

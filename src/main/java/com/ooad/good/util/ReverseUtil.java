@@ -2,6 +2,9 @@ package com.ooad.good.util;
 
 import com.ooad.good.domain.*;
 
+/**
+ * @author wz
+ */
 public class ReverseUtil {
 
     public static ProductPo reverseToProductPo(Product product) {

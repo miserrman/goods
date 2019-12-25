@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * 1. 货品返回的时候是不是要带着商品本身
- * 2.
+ * @author wz
  */
 @Repository
 public class ProductDao {
@@ -38,7 +38,10 @@ public class ProductDao {
     }
 
     public List<Product> findProductByGoodsId(Integer goodsId, Integer page, Integer limit) throws MallException{
-        if (page != null && limit != null && (page <= 0 || limit <= 0)) {
+        if (page != null && limit != null ) {
+            throw new MallException(ResponseCode.BAD_ARGUMENT);
+        }
+        if (page <= 0 || limit <= 0) {
             throw new MallException(ResponseCode.BAD_ARGUMENT);
         }
         List<Product> productList = productMapper.findProductByGoodsId(goodsId, page, limit);

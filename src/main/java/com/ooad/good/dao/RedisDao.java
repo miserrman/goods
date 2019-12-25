@@ -6,6 +6,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
+/**
+ * @author wz
+ */
 @Repository
 public class RedisDao {
     @Autowired
@@ -25,14 +28,16 @@ public class RedisDao {
     }
 
     public void clearObjectFromRedis(String key) {
-        if (!redisTemplate.hasKey(key))
+        if (!redisTemplate.hasKey(key)) {
             return;
+        }
         redisTemplate.delete(key);
     }
 
     public void updateObjectFromRedis(String key, Object object) {
-        if (redisTemplate.hasKey(key))
+        if (redisTemplate.hasKey(key)) {
             writeObjectToRedis(key, object);
+        }
     }
 
     public void addProductStock(Integer productId, Integer num){

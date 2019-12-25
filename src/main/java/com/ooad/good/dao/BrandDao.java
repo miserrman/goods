@@ -15,6 +15,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author wz
+ */
 @Repository
 public class BrandDao {
 
@@ -25,9 +28,13 @@ public class BrandDao {
     BrandMapper brandMapper;
 
     public List<Brand> findAllBrands(Integer page, Integer limit) throws MallException{
-       if ((page != null || limit != null) && (page <= 0 || limit <= 0)) {
+        if (page != null || limit != null) {
+            throw new MallException(ResponseCode.BAD_ARGUMENT);
+        }
+        else if (page <= 0 || limit <= 0) {
            throw new MallException(ResponseCode.BAD_ARGUMENT);
-       }
+        }
+
         List<Brand> resList = brandMapper.findAllBrands(page, limit);
         if (resList == null || resList.size() == 0) {
             throw new MallException(ResponseCode.GET_BRAND_LIST_FAIL);
@@ -99,7 +106,10 @@ public class BrandDao {
     }
 
     public List<Brand> searchBrandByName(Integer brandId, String name, Integer page, Integer limit) throws MallException{
-        if ((page != null || limit != null) && (page <= 0 || limit <= 0)) {
+        if (page != null || limit != null) {
+            throw new MallException(ResponseCode.BAD_ARGUMENT);
+        }
+        if (page <= 0 || limit <= 0) {
             throw new MallException(ResponseCode.BAD_ARGUMENT);
         }
         List<Brand> brandList = brandMapper.searchBrandByName(brandId, name, page, limit);

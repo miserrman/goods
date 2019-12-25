@@ -8,7 +8,6 @@ import com.ooad.good.domain.*;
 import com.ooad.good.mapper.ProductMapper;
 import com.ooad.good.service.*;
 import com.ooad.good.util.ResponseCode;
-import com.ooad.good.util.ResponseUtil;
 import com.ooad.good.util.ReverseUtil;
 import com.ooad.good.util.exception.MallException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,10 +99,9 @@ public class GoodsServiceImpl implements GoodsService {
     /**
      * 清除商品，需要清除所有货品信息,清空购物车的对应产品，订单是否受影响?
      * @param goodsId 商品Id
-     * @return
      */
     @Override
-    public boolean clearGoodsById(Integer goodsId, HttpServletRequest request) throws MallException{
+    public void clearGoodsById(Integer goodsId, HttpServletRequest request) throws MallException{
         goodsDao.clearGoods(goodsId);
         List<Product> products = productDao.findProductByGoodsId(goodsId, null, null);
         List<Integer> productIdList = products.stream().map(Product::getId).collect(Collectors.toList());
@@ -111,7 +109,6 @@ public class GoodsServiceImpl implements GoodsService {
             productDao.clearProduct(id);
         }
         //commentService.deleteCommentByProductIdList(productIdList, request.getIntHeader("userId"), request.getHeader("ip"));
-        return true;
     }
 
 
@@ -158,7 +155,6 @@ public class GoodsServiceImpl implements GoodsService {
         return goodsPoList;
     }
 
-    // 改成sql
     @Override
     public List<GoodsPo> searchGoodsByCondition(String goodsSn, String name, Integer page, Integer limit) throws MallException {
         List<Goods> goodsList = goodsDao.searchGoods(name, goodsSn, page, limit);
@@ -200,12 +196,11 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public boolean clearProduct(Integer productId, HttpServletRequest request) throws MallException {
+    public void clearProduct(Integer productId, HttpServletRequest request) throws MallException {
         productDao.findProductById(productId);
         request.setAttribute("userId", 12);
         commentService.deleteCommentByProductId(productId, request.getIntHeader("userId"), request.getHeader("ip"));
         boolean res = productDao.clearProduct(productId);
-        return res;
     }
 
     @Override
@@ -249,7 +244,7 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public Product addProduct(Product product) throws MallException {
+    public void addProduct(Product product) throws MallException {
         Product pro = null;
         if (product.getId() == null) {
             pro = productDao.addProduct(product);
@@ -265,7 +260,6 @@ public class GoodsServiceImpl implements GoodsService {
             productMapper.updateProduct(pro);
             pro = productMapper.findProductById(pro.getId());
         }
-        return pro;
     }
 
     @Override

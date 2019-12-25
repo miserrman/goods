@@ -1,6 +1,13 @@
 package com.ooad.good.util;
 
+/**
+ * @author wz
+ */
+
 public enum ResponseCode {
+    /**
+     *
+     */
     ADD_GOODS_ERROR(771),
     DELETE_GOODS_ERROR(772),
     UPDATE_GOODS_ERROR(773),
